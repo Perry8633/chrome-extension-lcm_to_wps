@@ -20,8 +20,6 @@ function updateKeywordRowDisplay(index) {
 function saveOptions() {
   const filename = document.getElementById('filename').value;
   const dateFormat = document.getElementById('dateFormat').value === 'true';
-  const autoDetect = document.getElementById('autoDetect').value === 'true';
-  const includeHeaders = document.getElementById('includeHeaders').value === 'true';
 
   const keywordSettings = [];
   for (let i = 0; i < NUM_KEYWORDS; i++) {
@@ -43,8 +41,6 @@ function saveOptions() {
   chrome.storage.sync.set({
     filename: filename,
     dateFormat: dateFormat,
-    autoDetect: autoDetect,
-    includeHeaders: includeHeaders,
     keywordSettings: keywordSettings // Add new settings
   }, function() {
     const status = document.getElementById('status');
@@ -67,19 +63,13 @@ function restoreOptions() {
   chrome.storage.sync.get({
     filename: 'table_data',
     dateFormat: false,
-    autoDetect: true,
-    includeHeaders: true,
     keywordSettings: [] // Default to empty array for keyword settings
   }, function(items) {
     const filenameEl = document.getElementById('filename');
     const dateFormatEl = document.getElementById('dateFormat');
-    const autoDetectEl = document.getElementById('autoDetect');
-    const includeHeadersEl = document.getElementById('includeHeaders');
 
     if (filenameEl) filenameEl.value = items.filename;
     if (dateFormatEl) dateFormatEl.value = items.dateFormat.toString();
-    if (autoDetectEl) autoDetectEl.value = items.autoDetect.toString();
-    if (includeHeadersEl) includeHeadersEl.value = items.includeHeaders.toString();
 
     const keywordsTbody = document.getElementById('keywordsTbody');
     if (!keywordsTbody) {

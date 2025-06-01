@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "智能表单数据导出器",
+  "name": "页面关键词提取器",
   "version": "2.0.1", 
-  "description": "可自定义字段的网页表单数据提取与CSV导出工具，新增划词表格导出功能",
+  "description": "根据用户定义的关键词，从网页中提取相关信息并导出为CSV文件。",
   "permissions": ["activeTab", "scripting", "downloads", "storage", "contextMenus"],
   "host_permissions": ["<all_urls>"],
   "action": {
