@@ -2,91 +2,68 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <title>LCM Text Extractor</title>
   <style>
-    body {
-      width: 300px;
-      padding: 20px;
-      font-family: 'Microsoft YaHei', sans-serif;
-    }
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 10px;
-    }
-    .description {
-      font-size: 14px;
-      color: #666;
-      line-height: 1.4;
-    }
-    .instructions {
-      background: #f5f5f5;
-      padding: 15px;
-      border-radius: 5px;
-      margin: 15px 0;
-    }
-    .step {
-      margin: 8px 0;
-      font-size: 13px;
-    }
-    .step-number {
-      background: #007cba;
-      color: white;
-      border-radius: 50%;
-      width: 18px;
-      height: 18px;
-      display: inline-block;
-      text-align: center;
-      line-height: 18px;
-      font-size: 11px;
-      margin-right: 8px;
-    }
-    .button {
-      background: #007cba;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 100%;
-      font-size: 14px;
-    }
-    .button:hover {
-      background: #005a8b;
-    }
+    body { font-family: sans-serif; width: 350px; padding: 10px; font-size: 14px; }
+    .container { display: flex; flex-direction: column; gap: 10px; }
+    .section { border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+    .section-title { font-weight: bold; margin-bottom: 5px; }
+    .keyword-item { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+    .keyword-item span { flex-grow: 1; }
+    .delete-btn { background-color: #f44336; color: white; border: none; padding: 3px 6px; border-radius: 3px; cursor: pointer; font-size: 10px; }
+    .button-group { display: flex; gap: 5px; }
+    .button-group button { flex-grow: 1; }
+    #keywordList { max-height: 100px; overflow-y: auto; border: 1px solid #eee; padding: 5px; }
+    #status { margin-top: 5px; font-weight: bold; min-height: 20px; }
+    label { display: block; margin-bottom: 3px;}
+    input[type='text'], select { width: calc(100% - 10px); padding: 5px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 3px;}
+    button { padding: 6px 10px; background-color: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="title">表格数据提取器</div>
-    <div class="description">快速提取网页表格数据并保存为CSV文件</div>
+  <div class="container">
+    <div class="section">
+      <div class="section-title">Keyword Management</div>
+      <div>
+        <label for="keywordInput">New Keyword:</label>
+        <input type="text" id="keywordInput" placeholder="Enter keyword">
+      </div>
+      <button id="addKeyword">Add Keyword</button>
+      <div class="section-title" style="margin-top:10px;">Current Keywords:</div>
+      <div id="keywordList">
+        <!-- Keywords will be listed here -->
+      </div>
+      <button id="clearKeywords">Clear All Keywords</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Keyword Records</div>
+      <div>
+        <label for="recordName">Record Name:</label>
+        <input type="text" id="recordName" placeholder="Enter name for current keywords">
+      </div>
+      <button id="saveRecord">Save Current Keywords</button>
+
+      <div style="margin-top:10px;">
+        <label for="savedRecords">Load Record:</label>
+        <select id="savedRecords">
+          <option value="">-- Select a record --</option>
+        </select>
+      </div>
+      <div class="button-group">
+        <button id="loadRecord">Load Selected</button>
+        <button id="deleteRecord">Delete Selected</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Process Text</div>
+      <button id="processText">Process Selected Text & Export XLSX</button>
+    </div>
+
+    <div id="status"></div>
   </div>
-  
-  <div class="instructions">
-    <div class="step">
-      <span class="step-number">1</span>
-      在网页中找到要提取的表格
-    </div>
-    <div class="step">
-      <span class="step-number">2</span>
-      在表格区域右键点击
-    </div>
-    <div class="step">
-      <span class="step-number">3</span>
-      选择"提取表格数据"选项
-    </div>
-    <div class="step">
-      <span class="step-number">4</span>
-      CSV文件将自动下载到本地
-    </div>
-  </div>
-  
-  <button class="button" id="openOptions">打开设置页面</button>
-  
   <script src="popup.js"></script>
 </body>
 </html>

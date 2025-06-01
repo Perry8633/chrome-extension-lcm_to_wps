@@ -354,3 +354,100 @@ function downloadCSV(csvContent, filename) {
   
   alert('表格数据已成功导出为CSV文件！');
 }
+
+// Helper function to escape text for CSV cells
+function escapeCsvCell(cellText) {
+  if (cellText.includes(',') || cellText.includes('"') || cellText.includes('\n')) {
+    // Replace any existing double quotes with two double quotes
+    const escapedText = cellText.replace(/"/g, '""');
+    // Enclose the entire string in double quotes
+    return `"${escapedText}"`;
+  }
+  return cellText;
+}
+
+// Listener for messages from the popup script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'processTextToXlsx') { // Action name kept for compatibility with popup.js
+    const { text, keywords } = request;
+
+    if (!text) {
+      console.error("No text provided for processing.");
+      sendResponse({ success: false, message: 'No text provided.' });
+      return true;
+    }
+    if (!keywords || keywords.length < 2) {
+      console.error("Not enough keywords provided for processing.");
+      sendResponse({ success: false, message: 'At least two keywords are required.' });
+      return true;
+    }
+
+    try {
+      const csvRows = [];
+      for (let i = 0; i < keywords.length - 1; i++) {
+        const kw1 = keywords[i];
+        const kw2 = keywords[i + 1];
+
+        let startIndex = text.indexOf(kw1);
+        if (startIndex === -1) {
+          console.warn(`Keyword "${kw1}" not found.`);
+          continue;
+        }
+        startIndex += kw1.length; // Start search for kw2 after kw1
+
+        const endIndex = text.indexOf(kw2, startIndex);
+        if (endIndex === -1) {
+          console.warn(`Keyword "${kw2}" not found after "${kw1}".`);
+          continue;
+        }
+
+        const rawSubstring = text.substring(startIndex, endIndex);
+        const trimmedSubstring = rawSubstring.trim();
+        const escapedCellText = escapeCsvCell(trimmedSubstring);
+        csvRows.push(escapedCellText);
+      }
+
+      if (csvRows.length === 0) {
+        sendResponse({ success: false, message: 'No data extracted based on keywords.' });
+        return true;
+      }
+
+      const csvFileContent = csvRows.join('\n');
+      const bomAndCsvContent = '\uFEFF' + csvFileContent; // BOM for UTF-8
+
+      const blob = new Blob([bomAndCsvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+
+      chrome.downloads.download({
+        url: url,
+        filename: 'lcm.csv', // Changed from lcm.xlsx to lcm.csv
+        saveAs: false
+      }, (downloadId) => {
+        if (chrome.runtime.lastError) {
+          console.error('Download failed:', chrome.runtime.lastError.message);
+          sendResponse({ success: false, message: 'Download failed: ' + chrome.runtime.lastError.message });
+        } else if (downloadId === undefined && chrome.runtime.lastError === undefined) {
+          // This case can happen if the download is initiated but the ID is not immediately available,
+          // or if an issue occurred that didn't set chrome.runtime.lastError (less common).
+          console.warn('Download initiated, but no download ID returned immediately.');
+          sendResponse({ success: true, message: 'Download initiated (confirmation pending).' });
+        }
+        else {
+          sendResponse({ success: true, message: 'CSV file lcm.csv initiated for download.' });
+        }
+        // It's important to revoke the object URL, but ensure it's done after download initiation or if it fails.
+        // A timeout can be a simple way if the callback doesn't guarantee the download has started/finished.
+        // However, for downloads API, revoking after the callback is generally safe.
+        if (url) URL.revokeObjectURL(url);
+      });
+
+    } catch (error) {
+      console.error("Error processing text to CSV:", error);
+      sendResponse({ success: false, message: 'Error during processing: ' + error.message });
+    }
+    // Return true to indicate that sendResponse will be called asynchronously (for the download callback)
+    return true;
+  }
+  // If other actions, return false or handle them if necessary
+  // return true; // Keep this if there are other async message handlers
+});

@@ -1,78 +1,53 @@
-# 表格数据提取器 Chrome 扩展 / Table Data Extractor Chrome Extension
+# LCM Text Extractor Chrome Extension
 
-## 项目简介 / Project Introduction
-这是一个Chrome浏览器扩展，用于从网页中提取表格数据并导出为CSV文件。
-This is a Chrome extension for extracting table data from web pages and exporting to CSV files.
+## Purpose
 
-## 主要功能 / Key Features
-- 右键菜单提取表格数据 / Extract table data via right-click context menu
-- 智能表格检测 / Intelligent table detection
-- CSV格式导出 / Export to CSV format
-- 支持中文内容 / Support Chinese content
-- 可配置选项 / Configurable options
+LCM Text Extractor is a Chrome Manifest V3 extension designed to extract selected text from web pages on `*.zte.com.cn` domains. The extracted text is processed based on user-defined keywords and then exported as a CSV file named `lcm.csv`.
 
-## 文件结构 / File Structure
+## Features
 
-### `background.js`
-后台脚本，处理右键菜单和核心逻辑
-Background script handling context menu and core logic
+*   **Website Specific:** Operates exclusively on `*.zte.com.cn` websites.
+*   **Text Selection Based:** Processes text that the user selects on the webpage.
+*   **Keyword-Driven Extraction:**
+    *   Users can define a list of keywords.
+    *   The text selected by the user is split based on these keywords. The content between the first and second keyword becomes the first row in the CSV, the content between the second and third keyword becomes the second row, and so on.
+*   **Keyword Set Management:**
+    *   Users can save sets of keywords as named records.
+    *   Saved records can be loaded for later use.
+    *   Records can be deleted.
+*   **CSV Export:** The processed data is downloaded as a `lcm.csv` file.
 
-### `content.js`
-内容脚本，与网页交互
-Content script interacting with web pages
+## Installation
 
-### `utils.js`
-工具函数库，包含表格处理功能
-Utility functions including table processing
+1.  **Download Extension Files:** Obtain the folder containing the extension files (manifest.json, popup.html, etc.).
+2.  **Open Chrome Extensions Page:** Open Google Chrome and navigate to `chrome://extensions/`.
+3.  **Enable Developer Mode:** In the top right corner of the Extensions page, toggle "Developer mode" ON.
+4.  **Load Unpacked:** Click the "Load unpacked" button that appears.
+5.  **Select Extension Folder:** In the file dialog, navigate to and select the folder containing the extension files.
+6.  The LCM Text Extractor extension should now be installed and visible in your extensions list.
 
-### `popup.html`/`popup.js`
-扩展弹出页面
-Extension popup page
+## How to Use
 
-### `options.html`/`options.js`
-设置页面
-Options page
+1.  **Navigate to Target Site:** Go to a webpage within the `*.zte.com.cn` domain.
+2.  **Open the Extension Popup:** Click on the LCM Text Extractor icon in your Chrome toolbar to open the popup.
+3.  **Manage Keywords:**
+    *   **Add Keyword:** Type a keyword into the "New Keyword" input field and click "Add Keyword".
+    *   **Current Keywords:** View the list of currently added keywords. You can delete individual keywords using the "delete" button next to them.
+    *   **Clear Keywords:** Click "Clear All Keywords" to remove all keywords from the current list.
+4.  **Manage Keyword Records (Optional):**
+    *   **Save Record:** To save the current list of keywords for future use, enter a name in the "Record Name" input field and click "Save Current Keywords".
+    *   **Load Record:** Select a previously saved record from the "Load Record" dropdown and click "Load Selected". The keywords from that record will populate the "Current Keywords" list.
+    *   **Delete Record:** Select a record from the dropdown and click "Delete Selected" to remove it.
+5.  **Select Text on Page:** On the `*.zte.com.cn` webpage, select the block of text you want to process.
+6.  **Process and Export:**
+    *   In the extension popup, ensure you have at least two keywords in your "Current Keywords" list.
+    *   Click the "Process Selected Text & Export CSV" button.
+7.  **Download:** The `lcm.csv` file containing the extracted data will be automatically downloaded to your browser's default download location.
 
-### `manifest.json`
-扩展配置文件
-Extension manifest file
+## CSV Output Logic
 
-## 安装说明 / Installation
-1. 克隆或下载本项目
-   Clone or download this project
-2. 在Chrome中打开`chrome://extensions/`
-   Open `chrome://extensions/` in Chrome
-3. 启用"开发者模式"
-   Enable "Developer mode"
-4. 点击"加载已解压的扩展程序"
-   Click "Load unpacked"
-5. 选择本项目目录
-   Select this project directory
-
-## 使用方法 / Usage
-1. 在包含表格的网页上右键点击
-   Right-click on a web page with tables
-2. 选择"提取表格数据"
-   Select "Extract table data"
-3. CSV文件将自动下载
-   CSV file will be downloaded automatically
-
-## 配置选项 / Configuration
-点击扩展图标→"打开设置页面"可配置:
-Click extension icon→"Open options" to configure:
-- 默认文件名 / Default filename
-- 是否包含日期时间 / Include timestamp
-- 自动检测设置 / Auto-detection settings
-
-## 开发说明 / Development Notes
-- 使用Manifest V3规范
-  Using Manifest V3 specification
-- 主要API:
-  Main APIs:
-  - chrome.contextMenus
-  - chrome.scripting
-  - chrome.downloads
-  - chrome.storage
-
-## 许可证 / License
-MIT License
+*   The text content found between your 1st and 2nd keywords will form the content of the first row in the CSV.
+*   The text content found between your 2nd and 3rd keywords will form the content of the second row in the CSV.
+*   And so on for subsequent keyword pairs.
+*   Each extracted segment is placed in a single cell for its respective row.
+*   If a keyword pair is not found in sequence in the selected text, that row will be skipped in the CSV.
