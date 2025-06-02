@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "LCM Text Extractor",
+  "version": "1.0.0",
+  "description": "Extracts selected text from *.zte.com.cn pages and exports it to an XLSX file named lcm.xlsx based on keywords.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "downloads",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "*://*.zte.com.cn/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "LCM Text Extractor"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.zte.com.cn/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
