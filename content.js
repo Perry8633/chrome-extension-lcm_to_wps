@@ -57,6 +57,24 @@
   }
   
   // 监听来自background script的消息 (Listen for messages from background script)
+  function findAllPdfLinks() {
+    // More robust selector for PDF links, attempting case-insensitivity for ".pdf"
+    // This regex looks for .pdf at the end of the href, or .pdf? followed by other params.
+    const links = Array.from(document.querySelectorAll('a')).filter(link =>
+        link.href && /\.pdf(\?.*)?$/i.test(link.href)
+    );
+    const uniquePdfUrls = new Set();
+    links.forEach(link => {
+      try {
+        const url = new URL(link.href, document.baseURI).href;
+        uniquePdfUrls.add(url);
+      } catch (e) {
+        console.warn('Invalid URL found for PDF link:', link.href, e);
+      }
+    });
+    return Array.from(uniquePdfUrls);
+  }
+
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'getRightClickedTableInfo') {
       const targetTableElement = document.querySelector(`[${TABLE_SELECTOR_ATTR}="true"]`);
@@ -84,9 +102,19 @@
       // Return true even for synchronous operations like getSelection().toString()
       // to keep the message channel open until sendResponse is resolved, which is a good practice.
       return true;
+    } else if (request.action === 'getSelectedTextAndPdfLinks') {
+      const selectedText = window.getSelection().toString().trim();
+      const pdfLinks = findAllPdfLinks();
+      sendResponse({ selectedText: selectedText, pdfLinks: pdfLinks });
+      return true;
+    } else if (request.action === "getPageTextAndPdfLinks") {
+      const pageText = document.body.innerText || '';
+      const pdfLinks = findAllPdfLinks(); // Reuse existing function
+      sendResponse({ pageText: pageText, pdfLinks: pdfLinks });
+      return true;
     }
     // If no action matched, you might not call sendResponse, so returning undefined (by not having a return statement)
     // is appropriate. Or, explicitly return false if the channel should be closed synchronously.
-    // For this structure, having each handled 'if' branch return true is safest.
+    // For this structure, having each handled 'if' branch return true is safest for async operations.
   });
 })();

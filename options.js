@@ -136,10 +136,20 @@ function restoreOptions() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', restoreOptions);
-const saveButton = document.getElementById('save');
-if (saveButton) {
+document.addEventListener('DOMContentLoaded', () => {
+  restoreOptions();
+
+  const saveButton = document.getElementById('save');
+  if (saveButton) {
     saveButton.addEventListener('click', saveOptions);
-} else {
+  } else {
     console.error("Save button element not found in options.html.");
-}
+  }
+
+  const closeButton = document.getElementById('closeOptions');
+  if (closeButton) {
+    closeButton.addEventListener('click', function() {
+      window.close(); // This closes the current options page tab
+    });
+  }
+});

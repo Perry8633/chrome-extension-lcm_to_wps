@@ -51,3 +51,26 @@ LCM Text Extractor is a Chrome Manifest V3 extension designed to extract selecte
 *   And so on for subsequent keyword pairs.
 *   Each extracted segment is placed in a single cell for its respective row.
 *   If a keyword pair is not found in sequence in the selected text, that row will be skipped in the CSV.
+
+
+## Context Menu Features
+
+The extension also provides context menu options for quick actions when right-clicking on a `*.zte.com.cn` page.
+
+1.  **Main Menu: "Export Page Data"**
+    *   This parent menu item appears when you right-click anywhere on a `*.zte.com.cn` page. It groups the specific extraction actions.
+
+2.  **Sub-Menu: "Extract by Keywords to CSV & Download PDFs"**
+    *   **Context:** Appears when you have selected text on the page and then right-click.
+    *   **Action:**
+        *   Uses the keywords currently stored by the extension (typically the last set active in the popup or a loaded record). Ensure keywords are set via the popup first.
+        *   Processes the **selected text** based on these keywords, following the same CSV output logic as the popup.
+        *   Downloads the processed selected text as `lcm_keyword_extract.csv`.
+        *   Additionally, it finds and downloads **all discoverable PDF files linked on the entire page**.
+
+3.  **Sub-Menu: "Save Entire Page as CSV & Download PDFs"**
+    *   **Context:** Appears when you right-click anywhere on the page (no text selection needed).
+    *   **Action:**
+        *   Extracts all visible text content from the **entire page** (`document.body.innerText`).
+        *   Saves this entire text content into a single-cell CSV file named `lcm_full_page.csv`.
+        *   Additionally, it finds and downloads **all discoverable PDF files linked on the entire page** (same PDF download behavior as the option above).
