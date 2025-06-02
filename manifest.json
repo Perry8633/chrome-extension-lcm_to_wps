@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "LCM Text Extractor",
   "version": "1.0.0",
-  "description": "Extracts selected text from *.zte.com.cn pages and exports it to an XLSX file named lcm.xlsx based on keywords.",
+  "description": "Extracts selected text from *.zte.com.cn pages and exports it to a CSV file named lcm.csv based on keywords.",
   "permissions": [
     "activeTab",
     "scripting",
